@@ -4,7 +4,9 @@ import com.mabrlejenka.basketanalysis.writables.BasketAnalysisFilterdIntermediat
 
 public class BasketAnalysisCountingSupport {
 	
-	public void add(BasketAnalysisFilterdIntermediateValue value){
+	public long process(BasketAnalysisFilterdIntermediateValue value){
 		// TODO
+		return 0;
 	}
+	
 }

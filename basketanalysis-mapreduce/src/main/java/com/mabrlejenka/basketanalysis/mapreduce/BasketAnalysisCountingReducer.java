@@ -1,9 +1,11 @@
 package com.mabrlejenka.basketanalysis.mapreduce;
 
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import com.mabrlejenka.basketanalysis.support.BasketAnalysisCountingSupport;
+import com.mabrlejenka.basketanalysis.utils.Constants;
 import com.mabrlejenka.basketanalysis.writables.BasketAnalysisFilterdIntermediateKey;
 import com.mabrlejenka.basketanalysis.writables.BasketAnalysisFilterdIntermediateValue;
 
@@ -17,19 +19,27 @@ import com.mabrlejenka.basketanalysis.writables.BasketAnalysisFilterdIntermediat
  */
 public class BasketAnalysisCountingReducer
 		extends
-		Reducer<BasketAnalysisFilterdIntermediateKey, BasketAnalysisFilterdIntermediateValue, BasketAnalysisFilterdIntermediateValue, LongWritable> {
-	BasketAnalysisFilterdIntermediateKey emitKey = new BasketAnalysisFilterdIntermediateKey();
-	BasketAnalysisFilterdIntermediateValue emitValue = new BasketAnalysisFilterdIntermediateValue();
+		Reducer<BasketAnalysisFilterdIntermediateKey, BasketAnalysisFilterdIntermediateValue, LongWritable, Text> {
+	LongWritable emitKey = new LongWritable();
+	Text emitValue = new Text();
 
 	protected void reduce(
 			BasketAnalysisFilterdIntermediateKey key,
 			java.lang.Iterable<BasketAnalysisFilterdIntermediateValue> values,
-			org.apache.hadoop.mapreduce.Reducer<BasketAnalysisFilterdIntermediateKey, BasketAnalysisFilterdIntermediateValue, BasketAnalysisFilterdIntermediateValue, LongWritable>.Context context)
+			org.apache.hadoop.mapreduce.Reducer<BasketAnalysisFilterdIntermediateKey, BasketAnalysisFilterdIntermediateValue, LongWritable, Text>.Context context)
 			throws java.io.IOException, InterruptedException {
 		BasketAnalysisCountingSupport counter = new BasketAnalysisCountingSupport();
-		
+
 		for (BasketAnalysisFilterdIntermediateValue value : values) {
-			counter.add(value);
+			long process = counter.process(value);
+			
+			emitKey.set(process);
+			emitValue.set(buildValue(null, value.getWord().toString()));
+			context.write(emitKey, emitValue);
 		}
 	};
+	
+	String buildValue(String base, String trans) {
+		return base + Constants.TEXT_DELIMITER + trans;
+	}
 }

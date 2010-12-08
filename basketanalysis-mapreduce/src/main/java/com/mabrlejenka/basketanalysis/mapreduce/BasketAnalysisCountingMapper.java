@@ -7,7 +7,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import com.mabrlejenka.basketanalysis.utils.Constants;
 import com.mabrlejenka.basketanalysis.writables.BasketAnalysisFilterdIntermediateKey;
 import com.mabrlejenka.basketanalysis.writables.BasketAnalysisFilterdIntermediateValue;
-import com.mabrlejenka.basketanalysis.writables.BasketAnalysisInputValue;
 
 /**
  * 
@@ -26,7 +25,7 @@ public class BasketAnalysisCountingMapper
 	protected void map(
 			LongWritable key,
 			Text value,
-			org.apache.hadoop.mapreduce.Mapper<LongWritable, BasketAnalysisInputValue, BasketAnalysisFilterdIntermediateKey, BasketAnalysisFilterdIntermediateValue>.Context context)
+			org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, BasketAnalysisFilterdIntermediateKey, BasketAnalysisFilterdIntermediateValue>.Context context)
 			throws java.io.IOException, InterruptedException {
 		String[] split = value.toString().split(Constants.TEXT_DELIMITER);
 		if (split.length != 3) {
